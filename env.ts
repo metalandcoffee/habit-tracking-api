@@ -13,6 +13,7 @@ if (isDevelopment) {
   loadEnv('test')
 }
 
+// Define expected structure, types and constraints of env vars.
 const envSchema = z.object({
   NODE_ENV: z
     .enum(['development', 'test', 'production'])
@@ -27,6 +28,7 @@ const envSchema = z.object({
   BCRYPT_ROUNDS: z.coerce.number().min(10).max(20).default(12),
 })
 
+// Create a type from the schema for use in the app.
 export type Env = z.infer<typeof envSchema>
 let env: Env
 
@@ -35,7 +37,7 @@ try {
 } catch (e) {
   if (e instanceof z.ZodError) {
     console.log('Invalid env var')
-    console.error(JSON.stringify(e.flatten().fieldErrors, null, 2))
+    console.error(JSON.stringify(z.treeifyError(e).errors, null, 2))
 
     e.issues.forEach((err) => {
       const path = err.path.join('.')
