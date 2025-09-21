@@ -7,12 +7,12 @@ import habitRoutes from './routes/habitRoutes.ts'
 const app = express()
 
 app.get('/health', (req, res) => {
-    res.json({ status: 'health check ok' })
+  res.json({ status: 'health check ok' })
 })
 
-app.use('/api/auth', authRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/habits', habitRoutes);
+app.use('/api/auth', authRoutes)
+app.use('/api/users', userRoutes)
+app.use('/api/habits', habitRoutes)
 
 // Doing both so I have the option to import as a named or default import.
 export { app }
