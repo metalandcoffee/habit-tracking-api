@@ -112,12 +112,12 @@ export const habitTagsRelations = relations(habitTags, ({ one }) => ({
 
 // Define type that is inferred from a database schema definition (i.e. Users table)
 // Note: Type safety.
-export type User = typeof users.$inferInsert; // Note: This is a compile-time TypeScript type. It only exists during development and disappears when compiled to JavaScript.
-export type Habit = typeof habits.$inferInsert;
-export type Entry = typeof entries.$inferInsert;
-export type Tag = typeof tags.$inferInsert;
-export type HabitTag = typeof habitTags.$inferInsert;
+export type User = typeof users.$inferInsert // Note: This is a compile-time TypeScript type. It only exists during development and disappears when compiled to JavaScript.
+export type Habit = typeof habits.$inferInsert
+export type Entry = typeof entries.$inferInsert
+export type Tag = typeof tags.$inferInsert
+export type HabitTag = typeof habitTags.$inferInsert
 
 // Note: Runtime safety (validation.)
-export const insertUserSchema = createInsertSchema(users); // Validates data before database inserts.
-export const selectUserSchema = createSelectSchema(users); // Validates data coming back from database reads.
+export const insertUserSchema = createInsertSchema(users) // Validates data before database inserts.
+export const selectUserSchema = createSelectSchema(users) // Validates data coming back from database reads.
