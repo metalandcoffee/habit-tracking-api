@@ -21,3 +21,43 @@ export const validateBody = (schema: ZodType) => {
     }
   }
 }
+
+export const validateParams = (schema: ZodType) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    try {
+      schema.parse(req.params)
+      next()
+    } catch (e) {
+      if (e instanceof ZodError) {
+        return res.status(404).json({
+          error: 'Invalid params.',
+          details: e.issues.map((err) => ({
+            field: err.path.join('.'),
+            message: err.message,
+          })),
+        })
+      }
+      next(e)
+    }
+  }
+}
+
+export const validateQuery = (schema: ZodType) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    try {
+      schema.parse(req.query)
+      next()
+    } catch (e) {
+      if (e instanceof ZodError) {
+        return res.status(404).json({
+          error: 'Invalid query params.',
+          details: e.issues.map((err) => ({
+            field: err.path.join('.'),
+            message: err.message,
+          })),
+        })
+      }
+      next(e)
+    }
+  }
+}
