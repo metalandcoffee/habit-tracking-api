@@ -48,5 +48,62 @@ const seed = async () => {
         targetCount: 1,
       })
       .returning()
-  } catch (e) {}
+
+    // Step 5: Create many-to-many relationships.
+    await db.insert(habitTags).values({
+      habitId: exerciseHabit.id,
+      tagId: healthTag.id,
+    })
+
+    // Step 6: Create historical completion data.
+    console.log('Adding completion entries...')
+    const today = new Date()
+    today.setHours(12, 0, 0, 0)
+
+    // Exercise habit - completions for past 7 days.
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(today)
+      date.setDate(date.getDate() - i)
+      await db.insert(entries).values({
+        habitId: exerciseHabit.id,
+        completion_date: date,
+        note: i === 0 ? 'Great workout today!' : null,
+      })
+    }
+
+    // Step 7: Test relational queries.
+    console.log('\n🔍 Testing relational queries...')
+    const userWithHabits = await db.query.users.findFirst({
+      where: (users, { eq }) => eq(users.email, 'demo@habittracker.com'),
+      with: {
+        habits: {
+          with: {
+            entries: true,
+            habitTags: {
+              with: { tag: true },
+            },
+          },
+        },
+      },
+    })
+
+    console.log('✅ Database seeded successfully!')
+    console.log('\n📊 Seed Summary:')
+    console.log(`- Demo user has ${userWithHabits?.habits.length || 0} habits`)
+    console.log('\n🔑 Login Credentials:')
+    console.log(`Email: ${testUser.email}`)
+    console.log(`Username: ${testUser.username}`)
+    console.log(`Password: ${testUser.password}`)
+  } catch (error) {
+    console.error('❌ Seed failed:', error)
+    throw error
+  }
 }
+
+if (import.meta.url === `file://${process.argv[1]}`) {
+  seed()
+    .then(() => process.exit(0))
+    .catch((e) => process.exit(1))
+}
+
+export default seed
